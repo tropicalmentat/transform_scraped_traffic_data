@@ -29,5 +29,5 @@ transform_data
 echo "# Auto detect text files and perform LF normalization
 * text=auto" >> .gitattributes
 
-# create readme
-touch README.MD
+# create readme markdown
+touch README.md
