@@ -26,7 +26,7 @@ for blb in blobs:
 	blb_name = blb.name
 	fname = blb.name.split('/')[1]
 	
-	with open(data_fpath+'/'+yesterday+'/'+fname+'.txt',"wb") as fobj:
+	with open(data_fpath+'/'+yesterday+'/'+fname,"wb") as fobj:
 		# fobj.writelines(data)
 		client.download_blob_to_file(blb,fobj)
 
