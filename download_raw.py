@@ -2,6 +2,7 @@ from google.cloud import storage
 import os
 import logging
 import datetime as dt
+import sys
 
 data_fpath = r'data'
 
@@ -24,7 +25,13 @@ dump = list()
 for blb in blobs:
 	blb_name = blb.name
 	fname = blb.name.split('/')[1]
+	
+	with open(data_fpath+'/'+yesterday+'/'+fname+'.txt',"wb") as fobj:
+		# fobj.writelines(data)
+		client.download_blob_to_file(blb,fobj)
 
-with open(data_fpath+'/'+yesterday+'.txt',"wb") as fobj:
-	for data in set(dump):
-		fobj.write(data)
+# print(sys.getsizeof(dump))
+
+# TODO: Explore and understand data
+# when does a line status get changed?
+# how do we get the unique status at a particular snapshot?
