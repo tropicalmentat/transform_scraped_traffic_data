@@ -2,16 +2,16 @@ import datetime as dt
 # import great_expectations as ge
 import logging
 
-data_fpath = r'/home/gtorres/Desktop/transform_scrape_traffic_data/data/20200803/trfc_stat_20200803_121502.csv'
-
-def get_minutes(timestamp):
-	return timestamp.split(" ")[0].split(":")[1]
+data_fpath = r'/home/gtorres/Desktop/transform_scrape_traffic_data/data/20200803/trfc_stat_20200803_214502.csv'
 
 def get_scrape_timestamp(line_status):
 	return cln_ln.split(",")[-1]
 
 def get_northbound_timestamp(line_status):
 	return cln_ln.split(",")[3]
+
+def get_minutes(timestamp):
+	return timestamp.split(" ")[0].split(":")[1]
 
 def calc_estimated_timestamp(timestamp,timedelta):
 	return 	dt.datetime.strptime(timestamp,"%Y-%m-%d %H:%M")-timedelta
@@ -40,6 +40,8 @@ with open(data_fpath, "r") as fobj:
 
 			if unit=='seconds':
 				td = dt.timedelta(seconds=duration)
+			elif unit=='mins':
+				td = dt.timedelta(minutes=duration)		
 			elif unit=='hrs':
 				td = dt.timedelta(hours=duration)
 			elif unit=="days":
@@ -53,6 +55,4 @@ with open(data_fpath, "r") as fobj:
 			actual_ts = calc_actual_timestamp(estimated_ts,nb_ts_mins)
 			
 			print(estimated_ts,actual_ts)
-			# print(actual_ts)
 			# TODO: Need to generalize extraction of timestamps from northbound and southbound data
-			# TODO: replace of derived timestamp with actual time of update
