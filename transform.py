@@ -54,5 +54,6 @@ with open(data_fpath, "r") as fobj:
 
 			actual_ts = calc_actual_timestamp(estimated_ts,nb_ts_mins)
 			
-			print(estimated_ts,actual_ts)
+			print(ln,estimated_ts,actual_ts)
 			# TODO: Need to generalize extraction of timestamps from northbound and southbound data
+			# TODO: Deduplication of records
