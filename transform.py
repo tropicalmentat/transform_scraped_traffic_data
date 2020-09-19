@@ -8,6 +8,9 @@ def get_scrape_timestamp(line_status):
 	return cln_ln.split(",")[-1]
 
 def get_northbound_timestamp(line_status):
+	return cln_ln.split(",")[5]
+
+def get_southbound_timestamp(line_status):
 	return cln_ln.split(",")[3]
 
 def get_minutes(timestamp):
@@ -20,9 +23,9 @@ def calc_actual_timestamp(timestamp,minutes):
 	return dt.datetime(timestamp.year,timestamp.month,timestamp.day,timestamp.hour,int(minutes))
 
 def get_update_timelapse(timestamp):
-	duration = int(timestamp.split(" ")[2].strip('('))
+	nb_duration = int(timestamp.split(" ")[2].strip('('))
 	unit = timestamp.split(" ")[3]
-	return duration,unit
+	return nb_duration,unit
 
 
 with open(data_fpath, "r") as fobj:
@@ -31,21 +34,24 @@ with open(data_fpath, "r") as fobj:
 
 		if i > 0:
 			scrp_ts = get_scrape_timestamp(cln_ln)
+
 			nb_ts = get_northbound_timestamp(cln_ln)
+			sb_ts = get_southbound_timestamp(cln_ln)
 
 			nb_ts_mins = get_minutes(nb_ts)
+			sb_ts_mins = get_minutes(sb_ts)
 
-			duration = get_update_timelapse(nb_ts)[0]
+			nb_duration = get_update_timelapse(nb_ts)[0]
 			unit = get_update_timelapse(nb_ts)[1]
 
 			if unit=='seconds':
-				td = dt.timedelta(seconds=duration)
+				td = dt.timedelta(seconds=nb_duration)
 			elif unit=='mins':
-				td = dt.timedelta(minutes=duration)		
+				td = dt.timedelta(minutes=nb_duration)		
 			elif unit=='hrs':
-				td = dt.timedelta(hours=duration)
+				td = dt.timedelta(hours=nb_duration)
 			elif unit=="days":
-				td = dt.timedelta(days=duration)
+				td = dt.timedelta(days=nb_duration)
 
 			try:
 				estimated_ts =  calc_estimated_timestamp(scrp_ts,td)
@@ -54,6 +60,6 @@ with open(data_fpath, "r") as fobj:
 
 			actual_ts = calc_actual_timestamp(estimated_ts,nb_ts_mins)
 			
-			print(ln,estimated_ts,actual_ts)
+			# print(ln,estimated_ts,actual_ts)
 			# TODO: Need to generalize extraction of timestamps from northbound and southbound data
 			# TODO: Deduplication of records
