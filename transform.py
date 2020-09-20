@@ -42,6 +42,9 @@ with open(data_fpath, "r") as fobj:
 			sb_ts_mins = get_minutes(sb_ts)
 
 			nb_duration = get_update_timelapse(nb_ts)[0]
+			sb_duration = get_update_timelapse(sb_ts)[0]
+			
+			# TODO: Package this into a more elegeant function
 			unit = get_update_timelapse(nb_ts)[1]
 
 			if unit=='seconds':
