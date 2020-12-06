@@ -32,6 +32,8 @@ with open(data_fpath, "r") as fobj:
 	for i,ln in enumerate(fobj):
 		cln_ln = ln.strip('\n')
 
+		line = ' '.join(ln.split(',')[0:2])
+
 		if i > 0:
 			scrp_ts = get_scrape_timestamp(cln_ln)
 
@@ -63,6 +65,6 @@ with open(data_fpath, "r") as fobj:
 
 			actual_ts = calc_actual_timestamp(estimated_ts,nb_ts_mins)
 			
-			# print(ln,estimated_ts,actual_ts)
+			print(line,estimated_ts,actual_ts)
 			# TODO: Need to generalize extraction of timestamps from northbound and southbound data
 			# TODO: Deduplication of records
