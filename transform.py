@@ -27,21 +27,56 @@ def calc_estimated_timestamp(timestamp,timedelta):
 
 class transform_timestamp():
 	"""
-	Takes in a raw line from the input data and
+	Takes in a raw line_tower from the input data and
 	transforms it into analyzable format
+
+	Attributes
+	----------
+	raw_data : str
+		Raw scraped data line item
+	cleaned_data : list
+		List of string elements from raw_data
+	line_tower : list
+		Unique location identifier for traffic update
+	scrape_timestamp : str
+		Timestamp of line item scrape from website
+	raw_northbound_timestamp : str
+		Timestamp of northbound traffic status update
+	raw_southbound_timestamp : str
+		Timestamp of southbound traffic status update
+
 	"""
 
 	def __init__(self,raw_data):
 
 		self.raw_data = raw_data
 		self.cleaned_data = None
-		self.line = None
+		self.line_tower = None
 		self.scrape_timestamp = None
 
-		self.northbound_timestamp = None
-		self.southbound_timestamp = None 
+		self.raw_northbound_timestamp = None
+		self.raw_southbound_timestamp = None 
+
+		self.northbound_update_timelapse = None
+		self.southbound_update_timelapse = None
+
+		self.estimated_northbound_timestamp = None
+		self.southbound_estimated_timestamp = None
+
+		self.northbound_raw_minutes = None
+		self.southbound_raw_minutes = None
+
+		self.actual_northbound_timestamp = None
+		self.actual_southbound_timestamp = None
 
 		self.clean_and_decompose()
+		self.get_line_and_tower()
+		self.get_scrape_timestamp()
+		self.get_northbound_timestamp()
+		self.get_southbound_timestamp()
+
+		self.set_estimated_northbound_timestamp(self.raw_northbound_timestamp)
+		self.set_estimated_southbound_timestamp(self.raw_southbound_timestamp)
 
 	def clean_and_decompose(self):
 
@@ -51,25 +86,69 @@ class transform_timestamp():
 
 	def get_line_and_tower(self):
 
-		self.line = self.cleaned_data[0:2]
+		self.line_tower = self.cleaned_data[0:2]
 
 		return
 
 	def get_scrape_timestamp(self):
 
-		self.scrape_timestamp = self.cleaned_split(",")[-1]
+		self.scrape_timestamp = self.cleaned_data[-1]
 
 		return
 
 	def get_northbound_timestamp(self):
 
-		self.northbound_timestamp = self.cleaned_data[5]
+		self.raw_northbound_timestamp = self.cleaned_data[5]
 
 		return
 
 	def get_southbound_timestamp(self):
 
-		self.southbound_timestamp = self.cleaned_data[3]
+		self.raw_southbound_timestamp = self.cleaned_data[3]
+
+		return
+
+	def set_estimated_northbound_timestamp(self,timestamp):
+
+		self.estimated_northbound_timestamp = self.calculate_estimated_timestamp(timestamp)
+
+		return
+
+	def set_estimated_southbound_timestamp(self,timestamp):
+
+		self.estimated_southbound_timestamp = self.calculate_estimated_timestamp(timestamp)
+
+		return
+
+	def calculate_estimated_timestamp(self,timestamp):
+
+
+		def get_minutes(timestamp):
+
+			return timestamp.split(" ")[0].split(":")[1]
+
+		def get_update_duration(timestamp):
+			
+			return int(timestamp.split(" ")[2].strip('('))
+			
+		def get_duration_unit(timestamp):
+
+			return timestamp.split(" ")[3]
+
+
+		duration = get_update_duration(timestamp)
+		unit = get_duration_unit(timestamp)
+
+		if unit=='seconds':
+			_timedelta = dt.timedelta(seconds=duration)
+		elif unit=='mins':
+			_timedelta = dt.timedelta(minutes=duration)		
+		elif unit=='hrs':
+			_timedelta = dt.timedelta(hours=duration)
+		elif unit=="days":
+			_timedelta = dt.timedelta(days=duration)
+
+		return dt.datetime.strptime(self.scrape_timestamp,"%Y-%m-%d %H:%M")-_timedelta
 
 
 
@@ -80,7 +159,7 @@ def main():
 		for i,ln in enumerate(fobj):
 			cln_ln = ln.strip('\n')
 
-			line = ' '.join(ln.split(',')[0:2])
+			line_tower = ' '.join(ln.split(',')[0:2])
 
 			if i > 0:
 				scrp_ts = get_scrape_timestamp(cln_ln)
@@ -113,7 +192,7 @@ def main():
 
 				actual_ts = calc_actual_timestamp(estimated_ts,nb_ts_mins)
 				
-				print(line,estimated_ts,actual_ts)
+				print(line_tower,estimated_ts,actual_ts)
 				# TODO: Need to generalize extraction of timestamps from northbound and southbound data
 				# TODO: Deduplication of records
 
@@ -124,8 +203,11 @@ def _main():
 
 	with open(data_fpath, "r") as fobj:
 		for i,ln in enumerate(fobj):
-			transformed = transform_timestamp(ln)
-			print(transformed.cleaned_data)
+			if i==0:
+				pass
+			else:
+				transformed = transform_timestamp(ln)
+				print(transformed.estimated_southbound_timestamp)
 
 if __name__=="__main__":
 	_main()
