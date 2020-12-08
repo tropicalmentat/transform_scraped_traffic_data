@@ -34,7 +34,9 @@ class traffic_status():
 		# MMDA updates the traffic status
 		self.raw_data = raw_data
 		self.cleaned_data = None
-		self.line_tower = None
+		self.line_tower = None # TODO: Include line direction as well. Will need to decompose further into 2 line items
+		# self.line_tower_left = None
+		# self.line_tower_right = None
 		self.scrape_timestamp = None
 
 		self.raw_northbound_timestamp = None
