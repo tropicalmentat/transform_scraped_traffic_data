@@ -2,8 +2,6 @@ import datetime as dt
 # import great_expectations as ge
 import logging
 
-data_fpath = r'/home/gtorres/Desktop/transform_scrape_traffic_data/data/20200803/trfc_stat_20200803_214502.csv'
-
 def get_scrape_timestamp(line_status):
 	return cln_ln.split(",")[-1]
 
@@ -33,55 +31,101 @@ class transform_timestamp():
 	transforms it into analyzable format
 	"""
 
-	def __init__(raw_data):
+	def __init__(self,raw_data):
 
 		self.raw_data = raw_data
-		self.cleaned_data = self.raw_data.strip('\n')
-		self.line = ' '.join(ln.split(',')[0:2])
+		self.cleaned_data = None
+		self.line = None
 		self.scrape_timestamp = None
 
-	def get_scrape_timestamp(cleaned_line):
-		pass
+		self.northbound_timestamp = None
+		self.southbound_timestamp = None 
+
+		self.clean_and_decompose()
+
+	def clean_and_decompose(self):
+
+		self.cleaned_data = self.raw_data.strip('\n').split(",")
+
+		return
+
+	def get_line_and_tower(self):
+
+		self.line = self.cleaned_data[0:2]
+
+		return
+
+	def get_scrape_timestamp(self):
+
+		self.scrape_timestamp = self.cleaned_split(",")[-1]
+
+		return
+
+	def get_northbound_timestamp(self):
+
+		self.northbound_timestamp = self.cleaned_data[5]
+
+		return
+
+	def get_southbound_timestamp(self):
+
+		self.southbound_timestamp = self.cleaned_data[3]
 
 
 
-with open(data_fpath, "r") as fobj:
-	for i,ln in enumerate(fobj):
-		cln_ln = ln.strip('\n')
+def main():
+	data_fpath = r'/home/gtorres/Desktop/transform_scrape_traffic_data/data/20200803/trfc_stat_20200803_214502.csv'
 
-		line = ' '.join(ln.split(',')[0:2])
+	with open(data_fpath, "r") as fobj:
+		for i,ln in enumerate(fobj):
+			cln_ln = ln.strip('\n')
 
-		if i > 0:
-			scrp_ts = get_scrape_timestamp(cln_ln)
+			line = ' '.join(ln.split(',')[0:2])
 
-			nb_ts = get_northbound_timestamp(cln_ln)
-			sb_ts = get_southbound_timestamp(cln_ln)
+			if i > 0:
+				scrp_ts = get_scrape_timestamp(cln_ln)
 
-			nb_ts_mins = get_minutes(nb_ts)
-			sb_ts_mins = get_minutes(sb_ts)
+				nb_ts = get_northbound_timestamp(cln_ln)
+				sb_ts = get_southbound_timestamp(cln_ln)
 
-			# TODO: Package this into a more elegeant function
-			nb_duration = get_update_timelapse(nb_ts)[0]
-			sb_duration = get_update_timelapse(sb_ts)[0]
-			
-			unit = get_update_timelapse(nb_ts)[1]
+				nb_ts_mins = get_minutes(nb_ts)
+				sb_ts_mins = get_minutes(sb_ts)
 
-			if unit=='seconds':
-				td = dt.timedelta(seconds=nb_duration)
-			elif unit=='mins':
-				td = dt.timedelta(minutes=nb_duration)		
-			elif unit=='hrs':
-				td = dt.timedelta(hours=nb_duration)
-			elif unit=="days":
-				td = dt.timedelta(days=nb_duration)
+				# TODO: Package this into a more elegeant function
+				nb_duration = get_update_timelapse(nb_ts)[0]
+				sb_duration = get_update_timelapse(sb_ts)[0]
+				
+				unit = get_update_timelapse(nb_ts)[1]
 
-			try:
-				estimated_ts =  calc_estimated_timestamp(scrp_ts,td)
-			except Exception as e:
-				print(e)
+				if unit=='seconds':
+					td = dt.timedelta(seconds=nb_duration)
+				elif unit=='mins':
+					td = dt.timedelta(minutes=nb_duration)		
+				elif unit=='hrs':
+					td = dt.timedelta(hours=nb_duration)
+				elif unit=="days":
+					td = dt.timedelta(days=nb_duration)
 
-			actual_ts = calc_actual_timestamp(estimated_ts,nb_ts_mins)
-			
-			print(line,estimated_ts,actual_ts)
-			# TODO: Need to generalize extraction of timestamps from northbound and southbound data
-			# TODO: Deduplication of records
+				try:
+					estimated_ts =  calc_estimated_timestamp(scrp_ts,td)
+				except Exception as e:
+					print(e)
+
+				actual_ts = calc_actual_timestamp(estimated_ts,nb_ts_mins)
+				
+				print(line,estimated_ts,actual_ts)
+				# TODO: Need to generalize extraction of timestamps from northbound and southbound data
+				# TODO: Deduplication of records
+
+
+def _main():
+
+	data_fpath = r'/home/gtorres/Desktop/transform_scrape_traffic_data/data/20200803/trfc_stat_20200803_214502.csv'
+
+	with open(data_fpath, "r") as fobj:
+		for i,ln in enumerate(fobj):
+			transformed = transform_timestamp(ln)
+			print(transformed.cleaned_data)
+
+if __name__=="__main__":
+	_main()
