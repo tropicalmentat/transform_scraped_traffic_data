@@ -2,9 +2,9 @@ import datetime as dt
 # import great_expectations as ge
 import logging
 
-class transform_timestamp():
+class traffic_status():
 	"""
-	Takes in a raw line_tower from the input data and
+	Takes in a raw line item from the input data and
 	transforms it into analyzable format
 
 	Attributes
@@ -45,6 +45,9 @@ class transform_timestamp():
 
 		self.actual_northbound_timestamp = None
 		self.actual_southbound_timestamp = None
+
+		self.northbound_status = None
+		self.southbound_status = None
 
 		self.clean_and_decompose()
 		self.get_line_and_tower()
@@ -153,7 +156,7 @@ class transform_timestamp():
 							)
 
 
-def _main():
+def main():
 
 	data_fpath = r'/home/gtorres/Desktop/transform_scrape_traffic_data/data/20200803/trfc_stat_20200803_214502.csv'
 
@@ -162,8 +165,8 @@ def _main():
 			if i==0:
 				pass
 			else:
-				transformed = transform_timestamp(ln)
+				transformed = traffic_status(ln)
 				print(transformed.actual_southbound_timestamp)
 
 if __name__=="__main__":
-	_main()
+	main()
