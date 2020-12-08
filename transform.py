@@ -40,9 +40,6 @@ class traffic_status():
 		self.estimated_northbound_timestamp = None
 		self.southbound_estimated_timestamp = None
 
-		self.northbound_raw_minutes = None
-		self.southbound_raw_minutes = None
-
 		self.actual_northbound_timestamp = None
 		self.actual_southbound_timestamp = None
 
@@ -54,6 +51,9 @@ class traffic_status():
 		self.get_scrape_timestamp()
 		self.get_northbound_timestamp()
 		self.get_southbound_timestamp()
+
+		self.get_northbound_status()
+		self.get_southbound_status()
 
 		self.set_estimated_northbound_timestamp(self.raw_northbound_timestamp)
 		self.set_estimated_southbound_timestamp(self.raw_southbound_timestamp)
@@ -76,6 +76,18 @@ class traffic_status():
 	def get_scrape_timestamp(self):
 
 		self.scrape_timestamp = self.cleaned_data[-1]
+
+		return
+
+	def get_northbound_status(self):
+
+		self.northbound_status = self.cleaned_data[4]
+
+		return
+
+	def get_southbound_status(self):
+
+		self.southbound_status = self.cleaned_data[2]
 
 		return
 
@@ -166,7 +178,7 @@ def main():
 				pass
 			else:
 				transformed = traffic_status(ln)
-				print(transformed.actual_southbound_timestamp)
+				print(transformed.northbound_status)
 
 if __name__=="__main__":
 	main()
