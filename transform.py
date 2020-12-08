@@ -78,6 +78,9 @@ class transform_timestamp():
 		self.set_estimated_northbound_timestamp(self.raw_northbound_timestamp)
 		self.set_estimated_southbound_timestamp(self.raw_southbound_timestamp)
 
+		self.set_actual_northbound_timestamp(self.raw_northbound_timestamp,self.estimated_northbound_timestamp)
+		self.set_actual_southbound_timestamp(self.raw_southbound_timestamp,self.estimated_southbound_timestamp)
+
 	def clean_and_decompose(self):
 
 		self.cleaned_data = self.raw_data.strip('\n').split(",")
@@ -120,12 +123,19 @@ class transform_timestamp():
 
 		return
 
+	def set_actual_northbound_timestamp(self,raw,estimate):
+
+		self.actual_northbound_timestamp = self.calculate_actual_timestamp(raw,estimate)
+
+		return
+
+	def set_actual_southbound_timestamp(self,raw,estimate):
+
+		self.actual_southbound_timestamp = self.calculate_actual_timestamp(raw,estimate)
+
+		return
+
 	def calculate_estimated_timestamp(self,timestamp):
-
-
-		def get_minutes(timestamp):
-
-			return timestamp.split(" ")[0].split(":")[1]
 
 		def get_update_duration(timestamp):
 			
@@ -149,6 +159,21 @@ class transform_timestamp():
 			_timedelta = dt.timedelta(days=duration)
 
 		return dt.datetime.strptime(self.scrape_timestamp,"%Y-%m-%d %H:%M")-_timedelta
+
+	def calculate_actual_timestamp(self,raw_timestamp,estimated_timestamp):
+
+		def get_minutes(timestamp):
+
+			return timestamp.split(" ")[0].split(":")[1]
+
+		minutes = get_minutes(raw_timestamp)
+
+		return dt.datetime(estimated_timestamp.year,
+							estimated_timestamp.month,
+							estimated_timestamp.day,
+							estimated_timestamp.hour,
+							int(minutes)
+							)
 
 
 
@@ -207,7 +232,7 @@ def _main():
 				pass
 			else:
 				transformed = transform_timestamp(ln)
-				print(transformed.estimated_southbound_timestamp)
+				print(transformed.actual_southbound_timestamp)
 
 if __name__=="__main__":
 	_main()
