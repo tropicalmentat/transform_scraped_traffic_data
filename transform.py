@@ -16,9 +16,6 @@ def get_southbound_timestamp(line_status):
 def get_minutes(timestamp):
 	return timestamp.split(" ")[0].split(":")[1]
 
-def calc_estimated_timestamp(timestamp,timedelta):
-	return 	dt.datetime.strptime(timestamp,"%Y-%m-%d %H:%M")-timedelta
-
 def calc_actual_timestamp(timestamp,minutes):
 	return dt.datetime(timestamp.year,timestamp.month,timestamp.day,timestamp.hour,int(minutes))
 
@@ -26,6 +23,26 @@ def get_update_timelapse(timestamp):
 	nb_duration = int(timestamp.split(" ")[2].strip('('))
 	unit = timestamp.split(" ")[3]
 	return nb_duration,unit
+
+def calc_estimated_timestamp(timestamp,timedelta):
+	return 	dt.datetime.strptime(timestamp,"%Y-%m-%d %H:%M")-timedelta
+
+class transform_timestamp():
+	"""
+	Takes in a raw line from the input data and
+	transforms it into analyzable format
+	"""
+
+	def __init__(raw_data):
+
+		self.raw_data = raw_data
+		self.cleaned_data = self.raw_data.strip('\n')
+		self.line = ' '.join(ln.split(',')[0:2])
+		self.scrape_timestamp = None
+
+	def get_scrape_timestamp(cleaned_line):
+		pass
+
 
 
 with open(data_fpath, "r") as fobj:
@@ -43,10 +60,10 @@ with open(data_fpath, "r") as fobj:
 			nb_ts_mins = get_minutes(nb_ts)
 			sb_ts_mins = get_minutes(sb_ts)
 
+			# TODO: Package this into a more elegeant function
 			nb_duration = get_update_timelapse(nb_ts)[0]
 			sb_duration = get_update_timelapse(sb_ts)[0]
 			
-			# TODO: Package this into a more elegeant function
 			unit = get_update_timelapse(nb_ts)[1]
 
 			if unit=='seconds':
