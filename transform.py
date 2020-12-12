@@ -22,7 +22,25 @@ class traffic_status():
 		Timestamp of northbound traffic status update
 	raw_southbound_timestamp : str
 		Timestamp of southbound traffic status update
+	northbound_update_timelapse :
 
+	southbound_update_timelapse :
+
+	estimated_northbound_timelapse :
+
+	estimated_southbound_timelapse :
+
+	actual_northbound_timelapse :
+
+	actual_southbound_timelapse :
+
+	northbound_status : str
+
+	southbound_status : str
+
+	northbound_traffic_status : str
+
+	southbound_traffic_status : str
 	"""
 
 	def __init__(self,raw_data):
@@ -62,8 +80,10 @@ class traffic_status():
 		self.set_estimated_northbound_timestamp(self.raw_northbound_timestamp)
 		self.set_estimated_southbound_timestamp(self.raw_southbound_timestamp)
 
-		self.set_actual_northbound_timestamp(self.raw_northbound_timestamp,self.estimated_northbound_timestamp)
-		self.set_actual_southbound_timestamp(self.raw_southbound_timestamp,self.estimated_southbound_timestamp)
+		self.set_actual_northbound_timestamp(self.raw_northbound_timestamp,
+											 self.estimated_northbound_timestamp)
+		self.set_actual_southbound_timestamp(self.raw_southbound_timestamp,
+											 self.estimated_southbound_timestamp)
 
 		self.set_northbound_traffic_status(self.line_tower,
 											"NB",
@@ -190,11 +210,9 @@ class traffic_status():
 		traffic_status.append(str_actual_timestamp)
 		traffic_status.append(line_status)
 
-		return traffic_status
+		return ','.join(traffic_status)
 
 	def set_northbound_traffic_status(self,line_tower,direction,actual_timestamp,line_status):
-
-
 
 		self.northbound_traffic_status = self.build_traffic_status(
 												line_tower,
@@ -226,7 +244,7 @@ def main():
 				pass
 			else:
 				transformed = traffic_status(ln)
-				print(transformed.northbound_traffic_status)
+				# print(transformed.northbound_traffic_status)
 				print(transformed.southbound_traffic_status)
 
 if __name__=="__main__":
