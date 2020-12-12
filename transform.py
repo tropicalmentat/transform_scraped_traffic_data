@@ -27,9 +27,6 @@ class traffic_status():
 
 	def __init__(self,raw_data):
 
-		# TODO: Add duration between actual traffic update and 
-		# scrape time as an attribute. This will help understand how often
-		# MMDA updates the traffic status
 		self.raw_data = raw_data
 		self.cleaned_data = None
 		self.line_tower = None 
@@ -42,7 +39,7 @@ class traffic_status():
 		self.southbound_update_timelapse = None
 
 		self.estimated_northbound_timestamp = None
-		self.southbound_estimated_timestamp = None
+		self.estimated_southbound_timestamp = None
 
 		self.actual_northbound_timestamp = None
 		self.actual_southbound_timestamp = None
@@ -68,8 +65,14 @@ class traffic_status():
 		self.set_actual_northbound_timestamp(self.raw_northbound_timestamp,self.estimated_northbound_timestamp)
 		self.set_actual_southbound_timestamp(self.raw_southbound_timestamp,self.estimated_southbound_timestamp)
 
-		self.set_northbound_traffic_status()
-		self.set_southbound_traffic_status()
+		self.set_northbound_traffic_status(self.line_tower,
+											"NB",
+											self.actual_northbound_timestamp,
+											self.northbound_status)
+		self.set_southbound_traffic_status(self.line_tower,
+											"SB",
+											self.actual_southbound_timestamp,
+											self.southbound_status)
 
 	def clean_and_decompose(self):
 
@@ -179,31 +182,37 @@ class traffic_status():
 
 	def build_traffic_status(self,line_tower,direction,actual_timestamp,line_status):
 
+		str_actual_timestamp = str(actual_timestamp) # stringify actual timestamp from datetime
+
 		traffic_status = list()
 		traffic_status.extend(line_tower)
 		traffic_status.append(direction)
-		traffic_status.append(actual_timestamp)
+		traffic_status.append(str_actual_timestamp)
 		traffic_status.append(line_status)
 
 		return traffic_status
 
-	def set_northbound_traffic_status(self):
+	def set_northbound_traffic_status(self,line_tower,direction,actual_timestamp,line_status):
+
+
 
 		self.northbound_traffic_status = self.build_traffic_status(
-											self.line_tower,
-											"NB",
-											str(self.actual_northbound_timestamp),
-											self.northbound_status)
+												line_tower,
+												direction,
+												actual_timestamp,
+												line_status
+											)
 
 		return
 
-	def set_southbound_traffic_status(self):
+	def set_southbound_traffic_status(self,line_tower,direction,actual_timestamp,line_status):
 
 		self.southbound_traffic_status = self.build_traffic_status(
-											self.line_tower,
-											"SB",
-											str(self.actual_southbound_timestamp),
-											self.southbound_status)
+												line_tower,
+												direction,
+												actual_timestamp,
+												line_status
+											)
 
 		return
 
