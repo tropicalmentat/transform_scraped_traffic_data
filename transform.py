@@ -53,9 +53,6 @@ class traffic_status():
 		self.raw_northbound_timestamp = None
 		self.raw_southbound_timestamp = None 
 
-		self.northbound_update_timelapse = None
-		self.southbound_update_timelapse = None
-
 		self.estimated_northbound_timestamp = None
 		self.estimated_southbound_timestamp = None
 
