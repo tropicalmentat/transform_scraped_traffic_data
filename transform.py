@@ -22,25 +22,28 @@ class traffic_status():
 		Timestamp of northbound traffic status update
 	raw_southbound_timestamp : str
 		Timestamp of southbound traffic status update
-	northbound_update_timelapse : str
-
-	southbound_update_timelapse :
-
-	estimated_northbound_timelapse :
-
-	estimated_southbound_timelapse :
-
-	actual_northbound_timelapse :
-
-	actual_southbound_timelapse :
-
+	estimated_northbound_timelapse : datetime
+		Estimated timelapse of northbound traffic status after 
+		computing difference between scrape timestamp and listed duration
+	estimated_southbound_timelapse : datetime
+		Estimated timelapse of southbound traffic status after 
+		computing difference between scrape timestamp and listed duration
+	actual_northbound_timelapse : datetime
+		Actual timelapse of northbound traffic status computed by taking
+		estimated duration between scrape and listed traffic status update
+		timestamp.
+	actual_southbound_timelapse : datetime
+		Actual timelapse of southbound traffic status computed by taking
+		estimated duration between scrape and listed traffic status update
+		timestamp.
 	northbound_status : str
-
+		Traffic status of northbound line and tower (HIGH, MEDIUM, LIGHT)
 	southbound_status : str
-
+		Traffic status of southbound line and tower (HIGH, MEDIUM, LIGHT)
 	northbound_traffic_status : str
-
+		Complete northbound traffic status with timestamp
 	southbound_traffic_status : str
+		Complete southbound traffic status with timestamp
 	"""
 
 	def __init__(self,raw_data):
@@ -184,16 +187,21 @@ class traffic_status():
 
 	def calculate_actual_timestamp(self,raw_timestamp,estimated_timestamp):
 
+		def get_hour(timestamp):
+
+			return timestamp.split(':')[0]
+
 		def get_minutes(timestamp):
 
 			return timestamp.split(" ")[0].split(":")[1]
 
+		hour = get_hour(raw_timestamp)
 		minutes = get_minutes(raw_timestamp)
 
 		return dt.datetime(estimated_timestamp.year,
 							estimated_timestamp.month,
 							estimated_timestamp.day,
-							estimated_timestamp.hour,
+							int(hour),
 							int(minutes)
 							)
 
