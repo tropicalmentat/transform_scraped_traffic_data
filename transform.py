@@ -22,7 +22,7 @@ class traffic_status():
 		Timestamp of northbound traffic status update
 	raw_southbound_timestamp : str
 		Timestamp of southbound traffic status update
-	northbound_update_timelapse :
+	northbound_update_timelapse : str
 
 	southbound_update_timelapse :
 
@@ -69,13 +69,13 @@ class traffic_status():
 		self.southbound_traffic_status = list()
 
 		self.clean_and_decompose()
-		self.get_line_and_tower()
-		self.get_scrape_timestamp()
-		self.get_northbound_timestamp()
-		self.get_southbound_timestamp()
+		self.set_line_and_tower()
+		self.set_scrape_timestamp()
+		self.set_northbound_timestamp()
+		self.set_southbound_timestamp()
 
-		self.get_northbound_status()
-		self.get_southbound_status()
+		self.set_northbound_status()
+		self.set_southbound_status()
 
 		self.set_estimated_northbound_timestamp(self.raw_northbound_timestamp)
 		self.set_estimated_southbound_timestamp(self.raw_southbound_timestamp)
@@ -100,37 +100,37 @@ class traffic_status():
 
 		return
 
-	def get_line_and_tower(self):
+	def set_line_and_tower(self):
 
 		self.line_tower = self.cleaned_data[0:2]
 
 		return
 
-	def get_scrape_timestamp(self):
+	def set_scrape_timestamp(self):
 
 		self.scrape_timestamp = self.cleaned_data[-1]
 
 		return
 
-	def get_northbound_status(self):
+	def set_northbound_status(self):
 
 		self.northbound_status = self.cleaned_data[4]
 
 		return
 
-	def get_southbound_status(self):
+	def set_southbound_status(self):
 
 		self.southbound_status = self.cleaned_data[2]
 
 		return
 
-	def get_northbound_timestamp(self):
+	def set_northbound_timestamp(self):
 
 		self.raw_northbound_timestamp = self.cleaned_data[5]
 
 		return
 
-	def get_southbound_timestamp(self):
+	def set_southbound_timestamp(self):
 
 		self.raw_southbound_timestamp = self.cleaned_data[3]
 
@@ -244,7 +244,7 @@ def main():
 				pass
 			else:
 				transformed = traffic_status(ln)
-				# print(transformed.northbound_traffic_status)
+				print(transformed.northbound_traffic_status)
 				print(transformed.southbound_traffic_status)
 
 if __name__=="__main__":
